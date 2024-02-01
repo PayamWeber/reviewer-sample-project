@@ -19,6 +19,20 @@ class Product extends Model
         'vote',
         'reviewable_type',
         'price',
+        'creator_id',
+        'provider_id',
+    ];
+
+    /**
+     * @var string[]
+     */
+    protected $visible = [
+        'title',
+        'price',
+        'active',
+        'vote',
+        'reviewable_type',
+        'provider',
     ];
 
     /**

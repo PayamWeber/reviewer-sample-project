@@ -15,7 +15,7 @@ abstract class Controller extends BaseController
      * @param mixed $data
      * @return JsonResponse
      */
-    protected function successResponse(mixed $data): JsonResponse
+    protected function successResponse(mixed $data = []): JsonResponse
     {
         return new JsonResponse([
             'status' => true,
@@ -27,7 +27,7 @@ abstract class Controller extends BaseController
      * @param mixed $data
      * @return JsonResponse
      */
-    protected function failResponse(mixed $data): JsonResponse
+    protected function failResponse(mixed $data = []): JsonResponse
     {
         return new JsonResponse([
             'status' => false,

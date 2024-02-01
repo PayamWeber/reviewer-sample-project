@@ -12,7 +12,13 @@ class Provider extends Model
      * @var array<int, string>
      */
     protected $fillable = [
-        'title',
-        'price'
+        'title'
+    ];
+
+    /**
+     * @var string[]
+     */
+    protected $visible = [
+        'title'
     ];
 }

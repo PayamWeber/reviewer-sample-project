@@ -20,6 +20,8 @@ class ProductRepository implements ProductRepositoryInterface
     {
         return Product::query()
             ->with('provider')
+            ->where('active', true)
+            ->latest()
             ->get();
     }
 
@@ -32,8 +34,8 @@ class ProductRepository implements ProductRepositoryInterface
         return Product::query()->create([
             'title' => $data->getTitle(),
             'price' => $data->getPrice(),
-            'creator' => $data->getCreator(),
-            'provider' => $data->getProvider(),
+            'creator_id' => $data->getCreator()->id,
+            'provider_id' => $data->getProvider()->id,
             'vote' => 0,
             'active' => $data->isActive(),
             'reviewable_type' => $data->getReviewableType()->value,

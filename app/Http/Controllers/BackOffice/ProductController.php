@@ -3,17 +3,38 @@
 namespace App\Http\Controllers\BackOffice;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
+use App\Http\Requests\BackOffice\ProductCreateRequest;
+use App\Models\Enums\ProductReviewableType;
+use App\Models\Provider;
+use App\Services\DTO\ProductCreateDTO;
+use App\Services\ProductService;
+use Illuminate\Http\JsonResponse;
 
 class ProductController extends Controller
 {
-    public function create(Request $request)
+    /**
+     * @param ProductCreateRequest $request
+     * @return JsonResponse
+     */
+    public function store(ProductCreateRequest $request): JsonResponse
     {
-        $this->validate($request, [
-            'title' => 'string',
-            'active' => 'bool',
-            'price' => 'numeric',
-            'reviewable_type' => ['string', ],
-        ]);
+        /** @var ProductService $productService */
+        $productService = app(ProductService::class);
+
+        $dto = new ProductCreateDTO();
+        /** @var Provider $provider */
+        $provider = Provider::query()->find($request->get('provider_id'));
+        $dto->setTitle($request->get('title'))
+            ->setReviewableType(ProductReviewableType::from($request->get('reviewable_type')))
+            ->setPrice($request->get('price'))
+            ->setCreator($request->user())
+            ->setProvider($provider)
+            ->setActive($request->get('active'));
+
+        if ($productService->create($dto)){
+            return $this->successResponse();
+        } else {
+            return $this->failResponse();
+        }
     }
 }

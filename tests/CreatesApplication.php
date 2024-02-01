@@ -2,8 +2,11 @@
 
 namespace Tests;
 
+use App\Models\Product;
+use App\Repositories\Interfaces\ProductRepositoryInterface;
 use Illuminate\Contracts\Console\Kernel;
 use Illuminate\Foundation\Application;
+use Mockery\MockInterface;
 
 trait CreatesApplication
 {

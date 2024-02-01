@@ -16,7 +16,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->prefix('/product')->group(function () {
+Route::prefix('/product')->group(function () {
     Route::get('/list', [ProductController::class, 'list']);
 });
 
