@@ -11,6 +11,6 @@ class ProductRepository implements ProductRepositoryInterface
 
     public function getAllProducts(): Collection
     {
-        return Product::all();
+        return Product::query()->get();
     }
 }
