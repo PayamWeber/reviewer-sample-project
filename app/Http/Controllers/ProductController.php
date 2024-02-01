@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Repositories\Interfaces\ProductRepositoryInterface;
+use App\Services\ProductService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -14,8 +14,8 @@ class ProductController extends Controller
      */
     public function list(Request $request): JsonResponse
     {
-        $productRepo = app(ProductRepositoryInterface::class);
+        $productService = app(ProductService::class);
 
-        return $this->successResponse($productRepo->getAllProducts());
+        return $this->successResponse($productService->getAllActiveProducts());
     }
 }

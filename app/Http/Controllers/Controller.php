@@ -22,4 +22,16 @@ abstract class Controller extends BaseController
             'data' => $data
         ]);
     }
+
+    /**
+     * @param mixed $data
+     * @return JsonResponse
+     */
+    protected function failResponse(mixed $data): JsonResponse
+    {
+        return new JsonResponse([
+            'status' => false,
+            'data' => $data
+        ]);
+    }
 }

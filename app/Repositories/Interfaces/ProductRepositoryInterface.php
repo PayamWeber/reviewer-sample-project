@@ -6,5 +6,5 @@ use Illuminate\Database\Eloquent\Collection;
 
 interface ProductRepositoryInterface
 {
-    public function getAllProducts(): Collection;
+    public function getAllActiveProducts(): Collection;
 }

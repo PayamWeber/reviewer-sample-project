@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Product extends Model
 {
@@ -13,6 +14,26 @@ class Product extends Model
      */
     protected $fillable = [
         'title',
-        'price'
+        'price',
+        'active',
+        'vote',
+        'reviewable_type',
+        'price',
     ];
+
+    /**
+     * @return BelongsTo
+     */
+    public function provider(): BelongsTo
+    {
+        return $this->belongsTo(Provider::class, 'provider_id');
+    }
+
+    /**
+     * @return BelongsTo
+     */
+    public function creator(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'creator_id');
+    }
 }
