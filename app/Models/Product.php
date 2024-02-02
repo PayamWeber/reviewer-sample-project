@@ -2,9 +2,15 @@
 
 namespace App\Models;
 
+use App\Models\Enums\ProductReviewableType;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
+/**
+ * @property int $id
+ * @property ProductReviewableType $reviewable_type
+ */
 class Product extends Model
 {
     /**
@@ -27,12 +33,21 @@ class Product extends Model
      * @var string[]
      */
     protected $visible = [
+        'id',
         'title',
         'price',
         'active',
         'vote',
         'reviewable_type',
         'provider',
+        'reviews',
+    ];
+
+    /**
+     * @var array
+     */
+    protected $casts = [
+        'reviewable_type' => ProductReviewableType::class
     ];
 
     /**
@@ -49,5 +64,13 @@ class Product extends Model
     public function creator(): BelongsTo
     {
         return $this->belongsTo(User::class, 'creator_id');
+    }
+
+    /**
+     * @return HasMany
+     */
+    public function reviews(): HasMany
+    {
+        return $this->hasMany(Review::class, 'product_id');
     }
 }

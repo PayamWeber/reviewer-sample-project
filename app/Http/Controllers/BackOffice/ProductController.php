@@ -16,14 +16,12 @@ class ProductController extends Controller
      * @param ProductCreateRequest $request
      * @return JsonResponse
      */
-    public function store(ProductCreateRequest $request): JsonResponse
+    public function store(ProductCreateRequest $request, ProductService $productService): JsonResponse
     {
-        /** @var ProductService $productService */
-        $productService = app(ProductService::class);
+        /** @var Provider $provider Provider always has a value because in validation we checked it */
+        $provider = Provider::query()->find($request->get('provider_id'));
 
         $dto = new ProductCreateDTO();
-        /** @var Provider $provider */
-        $provider = Provider::query()->find($request->get('provider_id'));
         $dto->setTitle($request->get('title'))
             ->setReviewableType(ProductReviewableType::from($request->get('reviewable_type')))
             ->setPrice($request->get('price'))

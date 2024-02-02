@@ -12,4 +12,5 @@ interface ProductRepositoryInterface
 {
     public function getAllActiveProducts(): Collection;
     public function create(ProductCreateDTO $data): Builder|Model|Product;
+    public function updateVotes(Product $product, int $votes): bool;
 }

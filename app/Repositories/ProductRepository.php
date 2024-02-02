@@ -19,7 +19,9 @@ class ProductRepository implements ProductRepositoryInterface
     public function getAllActiveProducts(): Collection
     {
         return Product::query()
-            ->with('provider')
+            ->with(['provider', 'reviews' => function($query){
+                return $query->latest();
+            }])
             ->where('active', true)
             ->latest()
             ->get();
@@ -39,6 +41,18 @@ class ProductRepository implements ProductRepositoryInterface
             'vote' => 0,
             'active' => $data->isActive(),
             'reviewable_type' => $data->getReviewableType()->value,
+        ]);
+    }
+
+    /**
+     * @param Product $product
+     * @param int $votes
+     * @return bool
+     */
+    public function updateVotes(Product $product, int $votes): bool
+    {
+        return $product->update([
+            'vote' => $votes
         ]);
     }
 }

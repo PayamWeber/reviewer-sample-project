@@ -5,6 +5,7 @@ namespace App\Exceptions;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
+use Symfony\Component\HttpFoundation\Response;
 use Throwable;
 
 class Handler extends ExceptionHandler
@@ -33,15 +34,15 @@ class Handler extends ExceptionHandler
             return response()->json([
                 'status' => false,
                 'data' => $e->errors()
-            ]);
+            ], Response::HTTP_UNPROCESSABLE_ENTITY);
         });
 
         if (! app()->hasDebugModeEnabled()) {
             $this->renderable(function (Throwable $e, Request $request) {
                 return response()->json([
                     'status' => false,
-                    'data' => $e->getMessage()
-                ]);
+                    'data' => "internal server error"
+                ], Response::HTTP_INTERNAL_SERVER_ERROR);
             });
         }
     }

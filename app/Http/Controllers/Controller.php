@@ -6,6 +6,7 @@ use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Routing\Controller as BaseController;
+use Symfony\Component\HttpFoundation\Response;
 
 abstract class Controller extends BaseController
 {
@@ -32,6 +33,6 @@ abstract class Controller extends BaseController
         return new JsonResponse([
             'status' => false,
             'data' => $data
-        ]);
+        ], Response::HTTP_BAD_REQUEST);
     }
 }

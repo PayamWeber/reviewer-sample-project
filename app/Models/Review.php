@@ -12,7 +12,8 @@ class Review extends Model
      * @var array<int, string>
      */
     protected $fillable = [
-        'title',
-        'price'
+        'vote',
+        'description',
+        'product_id',
     ];
 }

@@ -9,15 +9,22 @@ use Illuminate\Database\Eloquent\Collection;
 
 class ProductService
 {
+    private ProductRepositoryInterface $productRepository;
+
+    /**
+     * @param ProductRepositoryInterface $productRepository
+     */
+    public function __construct(ProductRepositoryInterface $productRepository)
+    {
+        $this->productRepository = $productRepository;
+    }
+
     /**
      * @return Product[]|Collection
      */
     public function getAllActiveProducts(): array|Collection
     {
-        /** @var ProductRepositoryInterface $productRepo */
-        $productRepo = app(ProductRepositoryInterface::class);
-
-        return $productRepo->getAllActiveProducts();
+        return $this->productRepository->getAllActiveProducts();
     }
 
     /**
@@ -26,9 +33,6 @@ class ProductService
      */
     public function create(ProductCreateDTO $data): Product
     {
-        /** @var ProductRepositoryInterface $productRepo */
-        $productRepo = app(ProductRepositoryInterface::class);
-
-        return $productRepo->create($data);
+        return $this->productRepository->create($data);
     }
 }
