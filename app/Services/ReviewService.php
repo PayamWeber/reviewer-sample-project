@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Exceptions\ProductReviewableOnlyByBuyersException;
 use App\Models\Enums\ProductReviewableType;
 use App\Models\Product;
 use App\Models\Review;
@@ -11,6 +12,8 @@ use App\Services\DTO\ReviewCreateDTO;
 use Exception;
 use Illuminate\Contracts\Cache\LockTimeoutException;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
+use Throwable;
 
 class ReviewService
 {
@@ -21,42 +24,61 @@ class ReviewService
      * @param ReviewRepositoryInterface $reviewRepository
      * @param ProductRepositoryInterface $productRepository
      */
-    public function __construct(ReviewRepositoryInterface $reviewRepository, ProductRepositoryInterface $productRepository)
-    {
+    public function __construct(
+        ReviewRepositoryInterface $reviewRepository,
+        ProductRepositoryInterface $productRepository
+    ) {
         $this->reviewRepository = $reviewRepository;
         $this->productRepository = $productRepository;
     }
 
     /**
      * @param ReviewCreateDTO $data
-     * @return Review|false
-     * @throws Exception
+     * @return Review
+     * @throws ProductReviewableOnlyByBuyersException
+     * @throws Throwable
      */
-    public function submit(ReviewCreateDTO $data): Review|false
+    public function submit(ReviewCreateDTO $data): Review
     {
         if ($data->getProduct()->reviewable_type == ProductReviewableType::REVIEWABLE_TO_BUYER_ONLY) {
-            throw new Exception("This product is reviewable only by buyers");
+            throw new ProductReviewableOnlyByBuyersException("This product is reviewable only by buyers");
         }
 
-        if ($review = $this->reviewRepository->create($data)){
-            $this->updateVotesForProduct($data);
+        DB::beginTransaction();
+        try {
+            $review = $this->reviewRepository->create($data);
+            $voteUpdateResult = $this->updateVotesForProduct($data);
+
+            if (!$voteUpdateResult){
+                throw new Exception("vote update failed for product " . $data->getProduct()->id);
+            }
+
+            DB::commit();
 
             return $review;
-        }
+        } catch (Throwable $throwable) {
+            logger()->error($throwable->getMessage(), [
+                'trace' => $throwable->getTraceAsString()
+            ]);
+            DB::rollBack();
 
-        return false;
+            throw $throwable;
+        }
     }
 
     /**
      * @param ReviewCreateDTO $data
-     * @return void
+     * @return bool
      */
-    public function updateVotesForProduct(ReviewCreateDTO $data): void
+    public function updateVotesForProduct(ReviewCreateDTO $data): bool
     {
+        $result = false;
         Cache::lock('voting_product_' . $data->getProduct()->id, 2)
-            ->get(function () use ($data) {
+            ->get(function () use ($data, &$result) {
                 $avg = $this->reviewRepository->getAverageVotesForProduct($data->getProduct());
-                $this->productRepository->updateVotes($data->getProduct(), $avg);
+                $result = $this->productRepository->updateVotes($data->getProduct(), $avg);
             });
+
+        return $result;
     }
 }

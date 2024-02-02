@@ -21,9 +21,10 @@ class ProductRepository implements ProductRepositoryInterface
         return Product::query()
             ->with(['provider', 'reviews' => function($query){
                 return $query->latest();
-            }])
+            }, 'reviews.user'])
             ->where('active', true)
             ->latest()
+            ->limit(100)
             ->get();
     }
 

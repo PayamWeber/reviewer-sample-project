@@ -18,6 +18,7 @@ class ReviewRepository implements ReviewRepositoryInterface
     public function create(ReviewCreateDTO $data): Builder|Model|Review
     {
         return Review::query()->create([
+            'user_id' => $data->getUser()->id,
             'product_id' => $data->getProduct()->id,
             'vote' => $data->getVote(),
             'description' => $data->getDescription(),

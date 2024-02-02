@@ -3,12 +3,14 @@
 namespace App\Services\DTO;
 
 use App\Models\Product;
+use App\Models\User;
 
 class ReviewCreateDTO
 {
     private int $vote;
     private string $description;
     private Product $product;
+    private User $user;
 
     public function setVote(int $vote): ReviewCreateDTO
     {
@@ -41,5 +43,16 @@ class ReviewCreateDTO
     public function getProduct(): Product
     {
         return $this->product;
+    }
+
+    public function setUser(User $user): ReviewCreateDTO
+    {
+        $this->user = $user;
+        return $this;
+    }
+
+    public function getUser(): User
+    {
+        return $this->user;
     }
 }

@@ -24,6 +24,11 @@ return new class extends Migration
             $table->boolean('active')->default(true);
             $table->enum('reviewable_type', ProductReviewableType::caseValues())->default(ProductReviewableType::REVIEWABLE_TO_ALL);
             $table->timestamps();
+
+            $table->foreign('provider_id')->references('id')->on('providers');
+            $table->foreign('creator_id')->references('id')->on('users');
+            $table->index('active');
+            $table->index(['provider_id', 'active']);
         });
     }
 
